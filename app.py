@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import os
 import requests
-import masterkey, apart
+import masterkey, apart, seoul
 
 app = Flask(__name__)
 telegram_token = os.getenv('telegram_token')
@@ -57,7 +57,33 @@ def telegram() :
                             msg += y['time'] + ' // ' + y['status'] + '\n'
             if(not ck):
                 msg = "존재하지 않는 지점입니다."
-
+    
+    if(msg.startswith("서울이스케이프")):
+        dic = seoul.seoul()
+        # dic = { '카페이름' : {'방이름' : [{시간, 예약여부}]} }
+        #'time' : x['hour'], 'is_open' : x['booked']
+        
+        if(msg == '서울이스케이프'):
+            msg = '서울이스케이프 (지점명) 을 입력해주세요.\n'
+            msg += '지점명은 다음과 같습니다.\n'
+            msg += '\n'.join(dic.keys())
+        else:
+            cafe_name = msg.split(' ')[1]
+            if(cafe_name in dic.keys()):
+                msg += "\n"
+                for y in list(dic[cafe_name].keys()):
+                    # y = '방이름'
+                    msg += y + '*******\n'
+                    for z in dic[cafe_name][y]:
+                        # z = {시간, 예약여부}
+                        msg += z['time'] + " "
+                        if(z['is_open']) : msg += "예약완료\n"
+                        else : msg += "예약가능\n"
+            else :
+                msg = '잘못된 지점명입니다.\n'
+                msg += '지점명은 다음과 같습니다.\n'
+                msg += '\n'.join(dic.keys())
+    
     elif(msg == '아파트'):
         apartInfo = apart.apart()
         msg = ''
