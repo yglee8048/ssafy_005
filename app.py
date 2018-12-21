@@ -38,60 +38,14 @@ def telegram() :
     msg = response['message']['text']
     
     if(msg.startswith("마스터키")):
-        cafes = masterkey.masterkey()
-        
-        if(msg == "마스터키"):
-            msg = '해당 카페의 예약 정보를 확인하고 싶다면 마스터키 (지점이름)을 입력하세요. ex)마스터키 부천점 \n'
-            for cafe in cafes:
-                msg += cafe['title'] + '\n' + cafe['address'] + '\n' + cafe['tel'] + '\n' + cafe['link'] + '\n'
-        else:
-            msg = msg.split(' ')[1]
-            ck = False
-            for cafe in cafes:
-                if(cafe['title'] == msg):
-                    ck = True
-                    msg = cafe['title'] + '\n' + cafe['address'] + '\n' + cafe['tel'] + '\n' + cafe['link'] + '\n'
-                    for x in cafe['themes']:
-                        msg += '***** ' + x['theme_name'] + ' / ' + x['theme_type'] + '타입 / 정원 : ' + x['fixednum'] + ' *****\n'
-                        for y in x['reservation']:
-                            msg += y['time'] + ' // ' + y['status'] + '\n'
-            if(not ck):
-                msg = "존재하지 않는 지점입니다."
+        msg = masterkey.get_msg(msg)
     
-    if(msg.startswith("서울이스케이프")):
-        dic = seoul.seoul()
-        # dic = { '카페이름' : {'방이름' : [{시간, 예약여부}]} }
-        #'time' : x['hour'], 'is_open' : x['booked']
-        
-        if(msg == '서울이스케이프'):
-            msg = '서울이스케이프 (지점명) 을 입력해주세요.\n'
-            msg += '지점명은 다음과 같습니다.\n'
-            msg += '\n'.join(dic.keys())
-        else:
-            cafe_name = msg.split(' ')[1]
-            if(cafe_name in dic.keys()):
-                msg += "\n"
-                for y in list(dic[cafe_name].keys()):
-                    # y = '방이름'
-                    msg += y + '*******\n'
-                    for z in dic[cafe_name][y]:
-                        # z = {시간, 예약여부}
-                        msg += z['time'] + " "
-                        if(z['is_open']) : msg += "예약완료\n"
-                        else : msg += "예약가능\n"
-            else :
-                msg = '잘못된 지점명입니다.\n'
-                msg += '지점명은 다음과 같습니다.\n'
-                msg += '\n'.join(dic.keys())
+    elif(msg.startswith("서울이스케이프")):
+        msg = seoul.get_msg(msg)
     
     elif(msg == '아파트'):
-        apartInfo = apart.apart()
-        msg = ''
-        for a in apartInfo:
-            msg += a['location'] + '\n'
-            msg += a['apart_name'] + '\n'
-            msg += str(a['apart_size']) + '\n'
-            msg += str(a['apart_cost']) + '\n'
+        msg = apart.get_msg(msg)
+        
     else :
         msg = '등록되지 않은 명령입니다.'
     

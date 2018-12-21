@@ -25,3 +25,15 @@ def apart():
                 "date" : apart["DEAL_DD"]
                 })
     return apartInfo
+    
+
+def get_msg(msg):
+    apartInfo = apart()
+    msg = ''
+    for a in apartInfo:
+        msg += a['location'] + '\n'
+        msg += a['apart_name'] + '\n'
+        msg += str(a['apart_size']) + '\n'
+        msg += str(a['apart_cost']) + '\n'
+        
+    return msg

@@ -25,6 +25,7 @@ def get_theme_infos(store_num):
 
     return themes
 
+
 def masterkey():
     url = 'http://www.master-key.co.kr/home/office'
     response = requests.get(url).text
@@ -49,4 +50,25 @@ def masterkey():
     return cafes
 
         
-
+def get_msg(msg):
+    cafes = masterkey()
+        
+    if(msg == "마스터키"):
+        msg = '해당 카페의 예약 정보를 확인하고 싶다면 마스터키 (지점이름)을 입력하세요. ex)마스터키 부천점 \n'
+        for cafe in cafes:
+            msg += cafe['title'] + '\n' + cafe['address'] + '\n' + cafe['tel'] + '\n' + cafe['link'] + '\n'
+    else:
+        msg = msg.split(' ')[1]
+        ck = False
+        for cafe in cafes:
+            if(cafe['title'] == msg):
+                ck = True
+                msg = cafe['title'] + '\n' + cafe['address'] + '\n' + cafe['tel'] + '\n' + cafe['link'] + '\n'
+                for x in cafe['themes']:
+                    msg += '***** ' + x['theme_name'] + ' / ' + x['theme_type'] + '타입 / 정원 : ' + x['fixednum'] + ' *****\n'
+                    for y in x['reservation']:
+                        msg += y['time'] + ' // ' + y['status'] + '\n'
+        if(not ck):
+            msg = "존재하지 않는 지점입니다."
+    
+    return msg
